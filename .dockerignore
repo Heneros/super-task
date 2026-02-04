@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+.next
+dist
+.DS_Store
+README.md
+.vscode
+.env
+*.local
+ignore 
+.pnpm-store

@@ -1,0 +1,25 @@
+services:
+  nest:
+    container_name: nest
+    restart: always
+    build:
+      context: .
+      dockerfile: ./nest/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./nest/.env.docker
+      - ./.env
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+      - RUN_MIGRATIONS_ON_START=0
+    volumes:
+      - ./api:/usr/src/app
+      - super_node_modules:/usr/src/app/node_modules
+    working_dir: /usr/src/app
+    tmpfs:
+      - /tmp
+    networks:
+      - super_net
