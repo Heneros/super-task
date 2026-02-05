@@ -9,11 +9,14 @@ services:
       - "3000:3000"
     env_file:
       - ./nest/.env
+      - ./.env
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
       - CHOKIDAR_USEPOLLING=true
       - RUN_MIGRATIONS_ON_START=0
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/nestHero?schema=public
+      - REDIS_HOST=redis
     volumes:
       - ./nest:/usr/src/app
       - super_node_modules:/usr/src/app/node_modules

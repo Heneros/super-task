@@ -3,7 +3,6 @@ npm-debug.log
 .next
 dist
 .DS_Store
-README.md
 .vscode
 .env
 *.local

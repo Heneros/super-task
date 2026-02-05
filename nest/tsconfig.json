@@ -13,13 +13,51 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/data/*": [
+        "./src/data/*"
+      ],
+      "@/data": [
+        "./src/data"
+      ],
+      "@/cloudinary/*": [
+        "./src/cloudinary/*"
+      ],
+      "@/prisma/*": [
+        "./src/prisma/*"
+      ],
+      "@/interfaces/*": [
+        "./src/interfaces/*"
+      ],
+      "@/decorators/*": [
+        "./src/decorators/*"
+      ],
+      "@/redis/*": [
+        "./src/redis/*"
+      ],
+      "@/pipe/*": [
+        "./src/pipe/*"
+      ],
+      "@/*": [
+        "./src"
+      ]
+    },
+    "include": [
+      "src/**/*",
+      "test/**/*.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "libs",
+      "dist"
+    ]
   }
 }
