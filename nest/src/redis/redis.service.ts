@@ -30,7 +30,7 @@ export class RedisService {
     await this.redis.expire(key, ttl);
   }
 
-    async saveDataItem(key: string, data, ttl: number = CACHE_TTL.FIVE_MINUTE) {
+  async saveDataItem(key: string, data, ttl: number = CACHE_TTL.FIVE_MINUTE) {
     const result = await this.redis.set(key, data, 'EX', ttl);
     await this.redis.expire(key, ttl);
     if (result) {

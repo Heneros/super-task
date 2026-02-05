@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {  PrismaClient, SuperHero } from '@prisma/client';
+import { PrismaClient, SuperHero } from '@prisma/client';
 import { AbstractRepositoryPrisma } from '@/prisma/abstract.repository';
 import { PrismaService } from '@/prisma/prisma.service';
 import { PAGINATION_LIMIT } from '@/data/defaultVariables';
@@ -17,6 +17,4 @@ export class SuperHeroesRepository extends AbstractRepositoryPrisma<SuperHero> {
     this.model = this.prisma.superHero;
     this.superModel = this.prismaService.superHero;
   }
-
-  }
-
+}

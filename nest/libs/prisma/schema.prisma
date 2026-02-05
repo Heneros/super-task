@@ -15,7 +15,7 @@ datasource db {
 
 model SuperHero{
   id Int @id @default(autoincrement())
-  nickname String 
+  nickname String  @unique
   origin_description String 
   superpowers  String[]
   catch_phrase String
@@ -30,7 +30,7 @@ model Images{
 
 
     posterUrl String
-    imageId Int @unique
+    imageId Int 
 
 
     superHero SuperHero @relation(fields: [imageId],references: [id], onUpdate: Cascade)
