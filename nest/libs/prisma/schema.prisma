@@ -28,12 +28,13 @@ model SuperHero{
 model Images{
     id Int @id @default(autoincrement())
 
+    isMain      Boolean  @default(false)
+  posterUrl   String
+  publicId    String
 
-    posterUrl String
-    imageId Int 
+    superHeroId Int 
 
-
-    superHero SuperHero @relation(fields: [imageId],references: [id], onUpdate: Cascade)
+    superHero SuperHero @relation(fields: [superHeroId],references: [id], onUpdate: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

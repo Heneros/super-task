@@ -14,6 +14,26 @@ export class UpdateSuperHeroHandler implements ICommandHandler<UpdateSuperHeroCo
   ) {}
 
   async execute(command: UpdateSuperHeroCommand) {
-    // const { } = command;
+    const { superId, updateSuperHeroDto } = command;
+
+    try {
+      const superHero = await this.superHeroRepository.update(
+        { id: superId },
+        updateSuperHeroDto,
+      );
+      await this.redisService.saveDataItem(
+        `${RedisPrefixEnum.SUPERHEROES_ID}-${superHero.id}`,
+        superHero,
+      );
+      return superHero;
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      console.error('Error updating SuperHero:', error);
+      throw new ConflictException(
+        'Could not update SuperHero at the moment. Please try again later.',
+      );
+    }
   }
 }

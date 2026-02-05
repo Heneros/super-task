@@ -3,18 +3,27 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
+  Delete,
   Get,
+  Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiQuery } from '@nestjs/swagger';
-import { GetAllSuperHeroesQuery } from './queries';
+import { GetAllSuperHeroesQuery, GetIdSuperHeroQuery } from './queries';
 import { PAGINATION_LIMIT } from '../data';
 import { CreateSuperHeroDto } from './dto/CreateSuperHero.dto';
 import { UpdateSuperHeroDto } from './dto/UpdateSuperHero.dto';
-import { CreateSuperHeroCommand, UpdateSuperHeroCommand, DeleteSuperHeroCommand } from './commands';
+import {
+  CreateSuperHeroCommand,
+  UpdateSuperHeroCommand,
+  DeleteSuperHeroCommand,
+} from './commands';
+import { GetSuperHeroById } from './handlers';
+import { CheckSuperHeroExistPipe } from '@/pipe/SuperHero.pipe';
 
 @Controller(SUPERHEROES_CONTROLLER)
 export class SuperheroesController {
@@ -51,19 +60,42 @@ export class SuperheroesController {
       new CreateSuperHeroCommand(createSuperHeroDto),
     );
     return res;
-
-}
+  }
 
   @Patch(SUPERHEROES_ROUTES.UPDATE_SUPERHERO)
   @ApiOperation({ summary: 'Update Superhero' })
   async updateSuperHero(
-    
-    @Body() updateSuperHeroDto: UpdateSuperHeroDto) {
+    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
+    superheroId: number,
+    @Body() updateSuperHeroDto: UpdateSuperHeroDto,
+  ) {
     const res = await this.commandBus.execute(
-      new UpdateSuperHeroCommand(updateSuperHeroDto),
+      new UpdateSuperHeroCommand(superheroId, updateSuperHeroDto),
     );
     return res;
+  }
 
-}
+  @Delete(SUPERHEROES_ROUTES.DELETE_SUPERHERO)
+  @ApiOperation({ summary: 'Delete Superhero' })
+  async deleteSuperHero(
+    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
+    superheroId: number,
+  ) {
+    const res = await this.commandBus.execute(
+      new DeleteSuperHeroCommand(superheroId),
+    );
+    return res;
+  }
 
+  @Get(SUPERHEROES_ROUTES.GET_ID_SUPERHERO)
+  @ApiOperation({ summary: 'Get Superhero by ID' })
+  async getSuperHeroById(
+    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
+    superheroId: number,
+  ) {
+    const res = await this.queryBus.execute(
+      new GetIdSuperHeroQuery(superheroId),
+    );
+    return res;
+  }
 }

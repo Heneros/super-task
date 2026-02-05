@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BadRequestException, ConflictException } from '@nestjs/common';
 import { RedisPrefixEnum } from '@/data';
 import { RedisService } from '@/redis/redis.service';
-import { CreateSuperHeroCommand, DeleteSuperHeroCommand } from '../commands';
+import { DeleteSuperHeroCommand } from '../commands';
 import { SuperHeroesRepository } from '../repository/SuperHeroes.repository';
 
 @CommandHandler(DeleteSuperHeroCommand)
@@ -16,21 +16,19 @@ export class DeleteSuperHeroHandler implements ICommandHandler<DeleteSuperHeroCo
     const { superId } = command;
 
     try {
-    
-
-      const superHero =
-        await this.superHeroRepository.findUnique({
-          id: superId,
-        });
+      const superHero = await this.superHeroRepository.findUnique({
+        id: superId,
+      });
 
       if (!superHero) {
         throw new BadRequestException('SuperHero not found');
       }
 
-      await this.superHeroRepository.delete(superId);
+      await this.superHeroRepository.delete({ id: superId });
+
       await this.redisService.deleteItemCache(
-        `${RedisPrefixEnum.SUPERHEROES_ID}-${superHero.id}`,
-        superHero,
+        RedisPrefixEnum.SUPERHEROES_ID,
+        superId,
       );
 
       return superHero;

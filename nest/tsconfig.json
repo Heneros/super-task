@@ -31,6 +31,9 @@
       "@/cloudinary/*": [
         "./src/cloudinary/*"
       ],
+      "@/superheroes/*": [
+        "./src/superheroes/*"
+      ],
       "@/prisma/*": [
         "./src/prisma/*"
       ],

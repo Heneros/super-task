@@ -9,6 +9,7 @@ import { SuperheroesController } from './superheroes.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { SuperHeroesRepository } from './repository/SuperHeroes.repository';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   imports: [PrismaModule, CqrsModule, RedisModule],
@@ -17,6 +18,7 @@ import { SuperHeroesRepository } from './repository/SuperHeroes.repository';
     ...Object.values(Handlers),
     RedisService,
     PrismaService,
+    CloudinaryService,
     SuperHeroesRepository,
   ],
 })

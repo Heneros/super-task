@@ -10,7 +10,7 @@ export class CreateSuperHeroDto {
   origin_description: string;
 
   @IsString({ each: true })
-    @ArrayNotEmpty()
+  @ArrayNotEmpty()
   @IsNotEmpty({ each: true })
   superpowers: string[];
 
