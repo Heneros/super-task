@@ -26,7 +26,7 @@ export class CloudinaryService {
 
 
 
-    async uploadBackdropImgMovie(superId: number, file: Express.Multer.File) {
+    async uploadImgSuper(superId: number, file: Express.Multer.File) {
     if (!file.mimetype.startsWith('image/')) {
       throw new BadRequestException({
         message: 'Invalid image file',
@@ -96,9 +96,9 @@ if (!superHero) {
 const newImage = await this.prismaService.images.create({
   data: {
     posterUrl: backDropImg.url,
-    publicId: backDropImg.publicId,
+    publicId: uniqueFileName,
     superHeroId: superId,
-    isMain: imagesCount === 0, 
+    isMain: false
   },  
 });
       return { newImage: newImage };
@@ -118,4 +118,52 @@ const newImage = await this.prismaService.images.create({
     }
   }
 
+
+  async deleteImgSuper(publicId: string) {
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: 'image',
+    });
+    const deletedImage = await this.prismaService.images.findUnique({
+      where: { publicId },
+    });  
+
+
+    if (!deletedImage) {
+      throw new NotFoundException('Image not found in database');
+    }
+
+    await this.prismaService.images.delete({
+      where: { publicId },
+    });
+    
+    return result;
+  }
+
+
+    async setImageMain(publicId: string) {
+          const findImage = await this.prismaService.images.findUnique({
+      where: { publicId },
+    });  
+    if (!findImage) {
+      throw new NotFoundException('Image not found in database');
+    }
+    const res = await this.prismaService.$transaction([
+      this.prismaService.images.updateMany({
+where:{
+  superHeroId: findImage.superHeroId,
+  isMain: true
+},
+data:{  isMain: false
+}
+      }), 
+      this.prismaService.images.update({
+        where:{ publicId },
+        data:{ isMain: true }
+      })
+
+
+    ]);   
+     return res;
+
+  }
 }

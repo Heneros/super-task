@@ -6,4 +6,8 @@ export const SUPERHEROES_ROUTES = {
   CREATE_SUPERHERO: '',
   UPDATE_SUPERHERO: ':superheroId',
   DELETE_SUPERHERO: ':superheroId',
+  UPDATE_SUPERHERO_IMAGE: 'update-image/:superheroId',
+ 
+  SET_SUPERHERO_IMAGE: 'set-image/:publicId',
+  DELETE_SUPERHERO_IMAGE: 'delete-image/:publicId',
 } as const;

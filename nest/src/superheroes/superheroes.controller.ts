@@ -10,6 +10,8 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiQuery } from '@nestjs/swagger';
@@ -24,13 +26,16 @@ import {
 } from './commands';
 import { GetSuperHeroById } from './handlers';
 import { CheckSuperHeroExistPipe } from '@/pipe/SuperHero.pipe';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 
 @Controller(SUPERHEROES_CONTROLLER)
 export class SuperheroesController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-    //     private readonly cloudinaryService: CloudinaryService,
+      private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   @Get(SUPERHEROES_ROUTES.GET_ALL)
@@ -97,5 +102,57 @@ export class SuperheroesController {
       new GetIdSuperHeroQuery(superheroId),
     );
     return res;
+  }
+
+
+  @Patch(SUPERHEROES_ROUTES.UPDATE_SUPERHERO_IMAGE)
+  @ApiOperation({ summary: 'Update Superhero Image' })
+  @UseInterceptors(
+    FileInterceptor('image', {
+          storage: memoryStorage(),
+          limits: { fileSize: 5 * 1024 * 1024 },
+  }))
+  async updateSuperHeroImage(
+    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe) superheroId: number,
+    @UploadedFile() file: Express.Multer.File
+  ){
+    try {
+         if (!file) {
+        console.error('FILE:', file);
+        return 'Error during upload file';
+      }
+      return await this.cloudinaryService.uploadImgSuper( superheroId, file);
+    } catch (error) {
+      console.error('Error updating superhero image:', error);
+      throw error;
+    }
+  }
+
+
+
+  @Delete(SUPERHEROES_ROUTES.DELETE_SUPERHERO_IMAGE)
+  @ApiOperation({ summary: 'Delete Superhero Image' })
+  async deleteSuperHeroImage(
+    @Param('publicId') publicId: string,
+  ){
+    try {
+      return await this.cloudinaryService.deleteImgSuper(publicId);
+    } catch (error) {
+      console.error('Error deleting superhero image:', error);
+      throw error;
+    }
+  }
+
+    @Patch(SUPERHEROES_ROUTES.SET_SUPERHERO_IMAGE)
+  @ApiOperation({ summary: 'Set Superhero Image Main' })
+  async setImageMain(
+    @Param('publicId') publicId: string,
+  ){
+    try {
+      return await this.cloudinaryService.setImageMain(publicId);
+    } catch (error) {
+      console.error('Error setting superhero image main:', error);
+      throw error;
+    }
   }
 }

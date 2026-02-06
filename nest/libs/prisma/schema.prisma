@@ -30,11 +30,12 @@ model Images{
 
     isMain      Boolean  @default(false)
   posterUrl   String
-  publicId    String
+  publicId    String   @unique
 
     superHeroId Int 
 
     superHero SuperHero @relation(fields: [superHeroId],references: [id], onUpdate: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
 }

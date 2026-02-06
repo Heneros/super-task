@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "docker:log": "docker compose -f docker-compose.dev.yaml up nest",
+    "docker:log": "docker compose -f docker-compose.dev.yaml up nest next",
     "docker:build": "docker compose -f docker-compose.dev.yaml up -d --build ",
     "prisma:build": "pnpm --filter ./nest exec  prisma generate --schema=libs/prisma/schema.prisma  && pnpm --filter ./nest exec  prisma migrate dev --schema=libs/prisma/schema.prisma",
     "docker:dev:down": "docker compose -f docker-compose.dev.yaml down ",
