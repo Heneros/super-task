@@ -1,8 +1,19 @@
-import * as Yup from 'yup';
+import * as Yup from 'yup'
 
-export const validationSchema = Yup.object().shape({
-    nickname: Yup.string().min(2).required(),
-    origin_description: Yup.string().required().min(10).max(350),   catch_phrase: Yup.string().required().min(10).max(150),
-    superpowers: Yup.string().required().min(10).max(250),
-    // publish: Yup.boolean(),
-});
+export const superheroSchema = Yup.object({
+  nickname: Yup.string()
+    .min(2, 'Too short')
+    .max(50, 'Too long')
+    .required('Nickname is required'),
+
+  origin_description: Yup.string()
+    .min(10, 'Minimum 10 characters')
+    .required('Origin is required'),
+
+  catch_phrase: Yup.string()
+    .min(3, 'Too short')
+    .required('Catch phrase is required'),
+
+  superpowers: Yup.string()
+    .required('Superpowers required'),
+})

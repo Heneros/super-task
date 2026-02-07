@@ -1,14 +1,12 @@
 "use client";
 
-
 import { useGetSuperHeroesQuery } from "@/redux/superheroes/superheroesApi";
 import { useState } from "react";
-import SuperHeroCard from '../components/superheroes/SuperHeroCard';
-import Pagination from '../components/Pagination';
+import SuperHeroCard from '../../components/superheroes/SuperHeroCard';
+import Pagination from '../../components/Pagination';
 
-export default function Home() {
-
-    const [page, setPage] = useState(1);
+export default function SuperHeroesPage() {
+               const [page, setPage] = useState(1);
                const { data, isLoading } = useGetSuperHeroesQuery({ page });
 
 
@@ -16,7 +14,7 @@ export default function Home() {
                               return <div className="p-10 text-center">Loading...</div>;
                }
 
-               console.log(data)
+
 
                return (<div className="p-6 max-w-6xl mx-auto">
                               <h1 className="text-3xl font-bold mb-6 text-center">
@@ -37,5 +35,4 @@ export default function Home() {
                </div>
 
                )
-
 }

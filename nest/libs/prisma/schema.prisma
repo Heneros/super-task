@@ -34,7 +34,7 @@ model Images{
 
     superHeroId Int 
 
-    superHero SuperHero @relation(fields: [superHeroId],references: [id], onUpdate: Cascade)
+    superHero SuperHero @relation(fields: [superHeroId],references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 

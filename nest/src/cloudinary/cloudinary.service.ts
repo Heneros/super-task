@@ -166,4 +166,11 @@ data:{  isMain: false
      return res;
 
   }
+
+  async getAllImagesBySuperHero(superId: number) {
+    const images = await this.prismaService.images.findMany({
+      where: { superHeroId: superId },
+    });
+    return images;
+  }
 }

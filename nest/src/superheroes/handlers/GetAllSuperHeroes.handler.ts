@@ -27,18 +27,38 @@ export class GetAllSuperHeroesHandler implements IQueryHandler<GetAllSuperHeroes
       const result = await this.superHeroRepos.findMany({
         skip: offset,
         take: PAGINATION_LIMIT,
-      });
+        include:{
+          images:{
+            where:{
+              isMain: true
+            }
+          }
+        }
+      }) as any;
 
       if (result.length === 0) {
-        throw new NotFoundException('No Superheroes Exist');
+        throw new 
+        NotFoundException('No Superheroes Exist');
       }
+
+const goodResult = result
+  .map(({ images, ...hero }) => ({
+    ...hero,
+    mainImage: images?.[0]?.posterUrl || null,
+  }));
+
+    // const formattedResult = result.map(hero => ({
+    //     ...hero,
+    //     mainImage: hero.images?.[0] || null, 
+    //   }));
+
       await this.redisService.saveItemsMultiple(
         cacheKey,
-        result,
+        goodResult,
         CACHE_TTL.ONE_MINUTE,
       );
 
-      return result;
+      return goodResult;
     } catch (error: unknown) {
       //  console.error('FindAllMoviesHandler error q:', error);
 

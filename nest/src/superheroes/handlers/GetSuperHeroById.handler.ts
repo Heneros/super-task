@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { RedisService } from '@/redis/redis.service';
 import { SuperHeroesRepository } from '../repository/SuperHeroes.repository';
+import { CACHE_TTL } from '@/data/ttl';
 
 @QueryHandler(GetIdSuperHeroQuery)
 export class GetSuperHeroById implements IQueryHandler<GetIdSuperHeroQuery> {
@@ -17,14 +18,16 @@ export class GetSuperHeroById implements IQueryHandler<GetIdSuperHeroQuery> {
 
   async execute(query: GetIdSuperHeroQuery) {
     const { superHeroId } = query;
-
+console.log('Executing GetSuperHeroById with ID:', superHeroId);
     try {
-      //       const movieKey = `movie:id:${movieId}`;
-      const movieCached = await this.redisService.getDataMultiple(
-        String(superHeroId),
+      const superKey = `superhero:id:${superHeroId}`;
+      
+      const superHeroCached = await this.redisService.getDataMultiple(
+      superKey
       );
-      if (movieCached) {
-        return JSON.parse(movieCached);
+      if (superHeroCached) {
+        console.log('Cache hit for SuperHero ID:', superHeroCached);
+        return superHeroCached
       }
 
       const superIdResult = await this.superHeroRepository.findUnique({
@@ -36,7 +39,7 @@ export class GetSuperHeroById implements IQueryHandler<GetIdSuperHeroQuery> {
         );
       }
 
-      await this.redisService.saveDataItem(String(superHeroId), superIdResult);
+      await this.redisService.saveDataItem(String(superHeroId), superIdResult    ,  CACHE_TTL.ONE_MINUTE,);
       return superIdResult;
     } catch (error: unknown) {
       if (error instanceof NotFoundException) {

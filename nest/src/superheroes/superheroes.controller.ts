@@ -38,6 +38,17 @@ export class SuperheroesController {
       private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  
+    @Get(SUPERHEROES_ROUTES.GET_ALL_IMAGES)
+  @ApiOperation({ summary: 'Get All Images for Superhero' })
+  async getAllImages(@Param('superheroId',ParseIntPipe, CheckSuperHeroExistPipe) superheroId: number){
+
+    return await this.cloudinaryService.getAllImagesBySuperHero(superheroId);
+  }  
+
+
+
+
   @Get(SUPERHEROES_ROUTES.GET_ALL)
   @ApiOperation({ summary: 'Get All Superheroes' })
   @ApiQuery({
@@ -57,6 +68,21 @@ export class SuperheroesController {
     );
     return res;
   }
+
+
+
+  @Get(SUPERHEROES_ROUTES.GET_ID_SUPERHERO)
+  @ApiOperation({ summary: 'Get Superhero by ID' })
+  async getSuperHeroById(
+    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
+    superheroId: number,
+  ) {
+    const res = await this.queryBus.execute(
+      new GetIdSuperHeroQuery(superheroId),
+    );
+    return res;
+  }
+
 
   @Post(SUPERHEROES_ROUTES.CREATE_SUPERHERO)
   @ApiOperation({ summary: 'Create Superhero' })
@@ -92,18 +118,6 @@ export class SuperheroesController {
     return res;
   }
 
-  @Get(SUPERHEROES_ROUTES.GET_ID_SUPERHERO)
-  @ApiOperation({ summary: 'Get Superhero by ID' })
-  async getSuperHeroById(
-    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
-    superheroId: number,
-  ) {
-    const res = await this.queryBus.execute(
-      new GetIdSuperHeroQuery(superheroId),
-    );
-    return res;
-  }
-
 
   @Patch(SUPERHEROES_ROUTES.UPDATE_SUPERHERO_IMAGE)
   @ApiOperation({ summary: 'Update Superhero Image' })
@@ -127,6 +141,7 @@ export class SuperheroesController {
       throw error;
     }
   }
+
 
 
 

@@ -20,9 +20,7 @@ export class DeleteSuperHeroHandler implements ICommandHandler<DeleteSuperHeroCo
         id: superId,
       });
 
-      if (!superHero) {
-        throw new BadRequestException('SuperHero not found');
-      }
+
 
       await this.superHeroRepository.delete({ id: superId });
 
@@ -36,7 +34,7 @@ export class DeleteSuperHeroHandler implements ICommandHandler<DeleteSuperHeroCo
       if (error instanceof BadRequestException) {
         throw error;
       }
-      console.error('Error creating SuperHero:', error);
+      console.error('Error deleting SuperHero:', error);
       throw new ConflictException(
         'Could not create SuperHero at the moment. Please try again later.',
       );
