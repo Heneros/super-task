@@ -47,6 +47,12 @@ Run backend and frontend in development mode:
 pnpm run dev
 ```
 
+Run unit tests
+
+```
+pnpm run unit
+```
+
 
 ## Launch app through Docker Compose
 
@@ -67,4 +73,11 @@ Apply Prisma schema and generate tables:
 
 ```
 pnpm run prisma:build
+```
+
+
+Run unit tests
+
+```
+pnpm run unit
 ```

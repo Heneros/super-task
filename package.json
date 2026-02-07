@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+
   "scripts": {
     "docker:log": "docker compose -f docker-compose.dev.yaml up nest next",
     "docker:build": "docker compose -f docker-compose.dev.yaml up -d --build ",
@@ -12,7 +13,9 @@
     "docker:base": "docker compose -f docker-compose.dev.yaml up -d --build postgres redis",
     "server": "pnpm --prefix ./nest run start:dev",
     "next": "pnpm --prefix ./super-next run dev",
-    "dev": "concurrently \"pnpm run next\" \"pnpm run server\""
+    "dev": "concurrently \"pnpm run next\" \"pnpm run server\"",
+    "unit":" pnpm --prefix  ./nest run test"
+
   },
   "keywords": [],
   "author": "",
