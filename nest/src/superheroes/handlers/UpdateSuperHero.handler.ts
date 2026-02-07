@@ -30,7 +30,7 @@ export class UpdateSuperHeroHandler implements ICommandHandler<UpdateSuperHeroCo
       if (error instanceof BadRequestException) {
         throw error;
       }
-      console.error('Error updating SuperHero:', error);
+    //  console.error('Error updating SuperHero:', error);
       throw new ConflictException(
         'Could not update SuperHero at the moment. Please try again later.',
       );

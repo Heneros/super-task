@@ -8,10 +8,17 @@
     "docker:build": "docker compose -f docker-compose.dev.yaml up -d --build ",
     "prisma:build": "pnpm --filter ./nest exec  prisma generate --schema=libs/prisma/schema.prisma  && pnpm --filter ./nest exec  prisma migrate dev --schema=libs/prisma/schema.prisma",
     "docker:dev:down": "docker compose -f docker-compose.dev.yaml down ",
-    "docker:dev:remove": "docker compose -f docker-compose.dev.yaml down -v --remove-orphans"
+    "docker:dev:remove": "docker compose -f docker-compose.dev.yaml down -v --remove-orphans",
+    "docker:base": "docker compose -f docker-compose.dev.yaml up -d --build postgres redis",
+    "server": "pnpm --prefix ./nest run start:dev",
+    "next": "pnpm --prefix ./super-next run dev",
+    "dev": "concurrently \"pnpm run next\" \"pnpm run server\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.25.0"
+  "packageManager": "pnpm@10.25.0",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

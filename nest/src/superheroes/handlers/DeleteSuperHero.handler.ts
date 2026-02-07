@@ -35,7 +35,7 @@ export class DeleteSuperHeroHandler implements ICommandHandler<DeleteSuperHeroCo
       if (error instanceof BadRequestException) {
         throw error;
       }
-      console.error('Error deleting SuperHero:', error);
+      // console.error('Error deleting SuperHero:', error);
       throw new ConflictException(
         'Could not create SuperHero at the moment. Please try again later.',
       );

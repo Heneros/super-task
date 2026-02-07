@@ -45,6 +45,7 @@ export default function Pagination({
                                                             className="px-4 py-2 border rounded disabled:opacity-50"
                                              >
                                                             Next
+                                                            
                                              </button>
                               </div>
                )

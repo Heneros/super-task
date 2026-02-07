@@ -38,7 +38,7 @@ export class CreateSuperHeroHandler implements ICommandHandler<CreateSuperHeroCo
       if (error instanceof BadRequestException) {
         throw error;
       }
-      console.error('Error creating SuperHero:', error);
+     // console.error('Error creating SuperHero:', error);
       throw new ConflictException(
         'Could not create SuperHero at the moment. Please try again later.',
       );
