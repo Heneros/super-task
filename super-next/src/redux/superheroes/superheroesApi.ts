@@ -62,7 +62,7 @@ export const superHeroesSlice = baseApiSlice.injectEndpoints({
         url: `/superheroes/delete-image/${publicId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['SuperHero'],
+      invalidatesTags: ['SuperHero', 'SuperHeros'],
     }),
     setSuperHeroMainImage: builder.mutation<any, string>({
       query: (publicId) => ({

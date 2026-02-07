@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClient, SuperHero } from '@prisma/client';
 import { AbstractRepositoryPrisma } from '@/prisma/abstract.repository';
 import { PrismaService } from '@/prisma/prisma.service';
+import { PAGINATION_LIMIT } from '@/data/defaultVariables';
 
 @Injectable()
 export class SuperHeroesRepository extends AbstractRepositoryPrisma<SuperHero> {
@@ -15,5 +16,24 @@ export class SuperHeroesRepository extends AbstractRepositoryPrisma<SuperHero> {
     this.prisma = prismaService;
     this.model = this.prisma.superHero;
     this.superModel = this.prismaService.superHero;
+  }
+
+  async findAllHeroes(skip: number) {
+  const [data, total] = await this.prisma.$transaction([
+      this.model.findMany({
+    skip,
+  take: PAGINATION_LIMIT,
+          include: {
+            images: {
+              where: {
+                isMain: true,
+              },
+            },
+          },
+  }),
+       this.model.count({  }),
+  ])
+  
+  return [data, total] as const;
   }
 }

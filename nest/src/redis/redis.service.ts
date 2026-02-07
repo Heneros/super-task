@@ -44,4 +44,7 @@ export class RedisService {
     const key = this.makeKey(prefix, String(id));
     await this.redis.del(key);
   }
+    async flushAll(): Promise<void> {
+    await this.redis.flushall();
+  }
 }

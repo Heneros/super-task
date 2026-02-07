@@ -28,6 +28,7 @@ export class DeleteSuperHeroHandler implements ICommandHandler<DeleteSuperHeroCo
         RedisPrefixEnum.SUPERHEROES_ID,
         superId,
       );
+      await this.redisService.flushAll()
 
       return superHero;
     } catch (error) {

@@ -8,3 +8,4 @@ dist
 *.local
 ignore 
 .pnpm-store
+features.txt

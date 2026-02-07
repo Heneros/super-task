@@ -24,24 +24,13 @@ export class GetAllSuperHeroesHandler implements IQueryHandler<GetAllSuperHeroes
         return superCached;
       }
 
-      const result = await this.superHeroRepos.findMany({
-        skip: offset,
-        take: PAGINATION_LIMIT,
-        include:{
-          images:{
-            where:{
-              isMain: true
-            }
-          }
-        }
-      }) as any;
+      const [data, total] = await this.superHeroRepos.findAllHeroes(offset);
 
-      if (result.length === 0) {
-        throw new 
-        NotFoundException('No Superheroes Exist');
+      if (data.length === 0) {
+        throw new NotFoundException('No Superheroes Exist');
       }
 
-const goodResult = result
+const goodResult = data
   .map(({ images, ...hero }) => ({
     ...hero,
     mainImage: images?.[0]?.posterUrl || null,
@@ -51,14 +40,14 @@ const goodResult = result
     //     ...hero,
     //     mainImage: hero.images?.[0] || null, 
     //   }));
-
+  const res = { data: goodResult, total };
       await this.redisService.saveItemsMultiple(
         cacheKey,
-        goodResult,
+        res,
         CACHE_TTL.ONE_MINUTE,
       );
 
-      return goodResult;
+      return res;
     } catch (error: unknown) {
       //  console.error('FindAllMoviesHandler error q:', error);
 
