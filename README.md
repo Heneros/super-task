@@ -1,9 +1,9 @@
 # Task SuperHeroes
 
 
-Backend Documentation: <a href=" localhost:3000/api">localhost:3000/api</a>
+Backend (Documentation): <a href="http://localhost:3000/api">localhost:3000/api</a>
 
-Frontend: <a href=" localhost:3001/api">localhost:3001</a>
+Frontend: <a href="http://localhost:3001">localhost:3001</a>
 
 
 ## Run Application with Node.js

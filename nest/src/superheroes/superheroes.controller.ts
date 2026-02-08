@@ -14,7 +14,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiConsumes,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 import { GetAllSuperHeroesQuery, GetIdSuperHeroQuery } from './queries';
 import { PAGINATION_LIMIT } from '../data';
 import { CreateSuperHeroDto } from './dto/CreateSuperHero.dto';
@@ -29,25 +36,24 @@ import { CheckSuperHeroExistPipe } from '@/pipe/SuperHero.pipe';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { CloudinaryService } from '@/cloudinary/cloudinary.service';
+import { UploadSuperHeroImageDto } from './dto/upload-superhero-image.dto';
 
 @Controller(SUPERHEROES_CONTROLLER)
 export class SuperheroesController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
-      private readonly cloudinaryService: CloudinaryService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  
-    @Get(SUPERHEROES_ROUTES.GET_ALL_IMAGES)
+  @Get(SUPERHEROES_ROUTES.GET_ALL_IMAGES)
   @ApiOperation({ summary: 'Get All Images for Superhero' })
-  async getAllImages(@Param('superheroId',ParseIntPipe, CheckSuperHeroExistPipe) superheroId: number){
-
+  async getAllImages(
+    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
+    superheroId: number,
+  ) {
     return await this.cloudinaryService.getAllImagesBySuperHero(superheroId);
-  }  
-
-
-
+  }
 
   @Get(SUPERHEROES_ROUTES.GET_ALL)
   @ApiOperation({ summary: 'Get All Superheroes' })
@@ -69,10 +75,13 @@ export class SuperheroesController {
     return res;
   }
 
-
-
   @Get(SUPERHEROES_ROUTES.GET_ID_SUPERHERO)
   @ApiOperation({ summary: 'Get Superhero by ID' })
+  @ApiParam({
+    name: 'superheroId',
+    type: Number,
+    description: 'Superhero ID',
+  })
   async getSuperHeroById(
     @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
     superheroId: number,
@@ -83,9 +92,24 @@ export class SuperheroesController {
     return res;
   }
 
-
   @Post(SUPERHEROES_ROUTES.CREATE_SUPERHERO)
   @ApiOperation({ summary: 'Create Superhero' })
+  @ApiBody({
+    description: 'Superhero Body Create',
+    type: CreateSuperHeroDto,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Superhero created successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Superhero already exists',
+  })
   async createSuperHero(@Body() createSuperHeroDto: CreateSuperHeroDto) {
     const res = await this.commandBus.execute(
       new CreateSuperHeroCommand(createSuperHeroDto),
@@ -95,6 +119,27 @@ export class SuperheroesController {
 
   @Patch(SUPERHEROES_ROUTES.UPDATE_SUPERHERO)
   @ApiOperation({ summary: 'Update Superhero' })
+  @ApiParam({
+    name: 'superheroId',
+    type: Number,
+    description: 'Superhero ID',
+  })
+  @ApiBody({
+    description: 'Updated superhero data',
+    type: UpdateSuperHeroDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Superhero updated successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Superhero not found',
+  })
   async updateSuperHero(
     @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
     superheroId: number,
@@ -108,6 +153,11 @@ export class SuperheroesController {
 
   @Delete(SUPERHEROES_ROUTES.DELETE_SUPERHERO)
   @ApiOperation({ summary: 'Delete Superhero' })
+  @ApiParam({
+    name: 'superheroId',
+    type: Number,
+    description: 'Superhero ID',
+  })
   async deleteSuperHero(
     @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
     superheroId: number,
@@ -118,38 +168,53 @@ export class SuperheroesController {
     return res;
   }
 
-
   @Patch(SUPERHEROES_ROUTES.UPDATE_SUPERHERO_IMAGE)
   @ApiOperation({ summary: 'Update Superhero Image' })
+  @ApiOperation({ summary: 'Upload image for superhero' })
+  @ApiConsumes('multipart/form-data')
+  @ApiParam({
+    name: 'superheroId',
+    type: Number,
+    description: 'Superhero ID',
+  })
+  @ApiBody({
+    description: 'Superhero image',
+    type: UploadSuperHeroImageDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Image uploaded successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid file or request',
+  })
   @UseInterceptors(
     FileInterceptor('image', {
-          storage: memoryStorage(),
-          limits: { fileSize: 5 * 1024 * 1024 },
-  }))
+      storage: memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   async updateSuperHeroImage(
-    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe) superheroId: number,
-    @UploadedFile() file: Express.Multer.File
-  ){
+    @Param('superheroId', ParseIntPipe, CheckSuperHeroExistPipe)
+    superheroId: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     try {
-         if (!file) {
+      if (!file) {
         console.error('FILE:', file);
         return 'Error during upload file';
       }
-      return await this.cloudinaryService.uploadImgSuper( superheroId, file);
+      return await this.cloudinaryService.uploadImgSuper(superheroId, file);
     } catch (error) {
       console.error('Error updating superhero image:', error);
       throw error;
     }
   }
 
-
-
-
   @Delete(SUPERHEROES_ROUTES.DELETE_SUPERHERO_IMAGE)
   @ApiOperation({ summary: 'Delete Superhero Image' })
-  async deleteSuperHeroImage(
-    @Param('publicId') publicId: string,
-  ){
+  async deleteSuperHeroImage(@Param('publicId') publicId: string) {
     try {
       return await this.cloudinaryService.deleteImgSuper(publicId);
     } catch (error) {
@@ -158,11 +223,9 @@ export class SuperheroesController {
     }
   }
 
-    @Patch(SUPERHEROES_ROUTES.SET_SUPERHERO_IMAGE)
+  @Patch(SUPERHEROES_ROUTES.SET_SUPERHERO_IMAGE)
   @ApiOperation({ summary: 'Set Superhero Image Main' })
-  async setImageMain(
-    @Param('publicId') publicId: string,
-  ){
+  async setImageMain(@Param('publicId') publicId: string) {
     try {
       return await this.cloudinaryService.setImageMain(publicId);
     } catch (error) {
