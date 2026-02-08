@@ -6,6 +6,18 @@ Backend (Documentation): <a href="http://localhost:3000/api">localhost:3000/api<
 Frontend: <a href="http://localhost:3001">localhost:3001</a>
 
 
+## Assumptions 
+
+- PostgreSQL and Redis for structured data and relational db.
+
+- Docker compose iit provides stable environment and allows the project to be launched on any machine.(The application can also be started locally)
+
+- RTK Query is used on the frontend to handle server state, caching, and data synchronization.
+
+- NestJS is used as the backend framework because it provides strong CQRS arch and maintain scalable application. It also makes it convenient to write unit tests and doc. using Jest and Swagger.
+
+- Image express storage is implemented locally for simplicity. But in app still you can use Cloudinary s3(the integration code is commented but fully functional)
+
 ## Run Application with Node.js
 
 
